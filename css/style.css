@@ -191,7 +191,14 @@ form input.invalid{border-color:var(--red)}
 .form-err{color:var(--red);font-size:13px;text-align:center;margin-top:10px}
 #form-view .btn{margin-top:6px}
 #thanks-view{text-align:center}
-#thanks-view .btn{margin-top:4px}
+#thanks-view .btn{
+  margin-top:4px;
+align-items: center;
+    display: flex;
+    justify-content: center;
+
+
+}
 .check-big{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;background:var(--yellow);color:#111;display:grid;place-items:center;font-size:32px;font-weight:900}
 .faqheading{
   font-size:16.5px;
@@ -247,4 +254,9 @@ form input.invalid{border-color:var(--red)}
 
 #reg-form input.invalid {
   border-color: #ff4d4f;
+}
+.telegram{
+     width: 36px;
+    height: 24px;
+  object-fit: contain;
 }
