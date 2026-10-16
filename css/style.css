@@ -55,7 +55,8 @@ mark{background:rgba(255,214,10,.2);color:#fff;padding:.05em .2em;border-radius:
 .btn:disabled{opacity:.6;cursor:wait} */
 
 .btn{
-  display:block;
+
+  display:flex;justify-content:center;
   width:100%;
   text-align:center;
   border:0;
