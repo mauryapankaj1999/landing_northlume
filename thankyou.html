@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0c" />
     <meta name="robots" content="noindex" />
-
     <title>Thank You — Northlume</title>
-
     <link rel="stylesheet" href="css/style.css" />
+
 
     <style>
       .ty-page {
@@ -19,17 +18,14 @@
         padding: 24px 16px;
         text-align: center;
       }
-
       .ty-box {
         max-width: 480px;
         width: 100%;
       }
-
       .ty-box .logoheader {
         margin: 0 auto 28px;
         display: block;
       }
-
       .ty-box .check-big {
         width: 72px;
         height: 72px;
@@ -40,17 +36,14 @@
         background: #1f9d55;
         color: #fff;
       }
-
       .ty-box h1 {
         font-size: 28px;
         margin-bottom: 12px;
       }
-
       .ty-box p {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         opacity: 0.85;
       }
-
       .ty-box .btn {
         display: inline-flex;
         align-items: center;
@@ -58,7 +51,12 @@
         gap: 8px;
         text-decoration: none;
       }
+      #count {
+        font-weight: 700;
+      }
     </style>
+
+
 
 
 
@@ -95,43 +93,53 @@
 <!-- End Meta Pixel Code -->
 
 
-
-
   </head>
-
   <body>
     <main class="ty-page">
       <div class="ty-box">
-        <img
-          src="img/logo.png"
-          alt="Northlume logo"
-          class="logoheader"
-        />
+        <img src="img/logo.png" alt="Northlume logo" class="logoheader" />
 
         <div class="check-big">✓</div>
-
         <h1>Thank you for registering!</h1>
-
         <p>
-        You're all set! Join our Telegram community to stay connected and get the latest updates.
+          You're almost in. Redirecting you to the Telegram group in
+          <span id="count">3</span> seconds…
         </p>
 
         <a
           class="btn"
           id="tg-btn"
           href="https://t.me/northlume"
-          target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener"
         >
-          Join Free Telegram Group
-
+          Join free Telegram Group
           <img
             src="img/telegramicon.png"
-            alt=""
+            alt="Telegram icon"
             class="telegram"
           />
         </a>
       </div>
     </main>
+
+    <script>
+      (function () {
+        var TELEGRAM_LINK = 'https://t.me/northlume';
+        var seconds = 3;
+        var countEl = document.getElementById('count');
+
+        var timer = setInterval(function () {
+          seconds--;
+
+          if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = TELEGRAM_LINK;
+            return;
+          }
+
+          countEl.textContent = seconds;
+        }, 1000);
+      })();
+    </script>
   </body>
 </html>
