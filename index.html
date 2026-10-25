@@ -656,18 +656,19 @@
               <small class="err"></small>
             </label>
 
-            <label
-              >Phone Number
-              <input
-                type="tel"
-                name="phone"
-                placeholder="9999988888"
-                maxlength="10"
-                autocomplete="tel"
-                required
-              />
-              <small class="err"></small>
-            </label>
+      <label>
+  Phone Number
+  <input
+    type="tel"
+    name="phone"
+    placeholder="10-digit mobile number"
+    pattern="[0-9]{10}"
+    inputmode="numeric"
+    autocomplete="tel"
+    required
+  />
+  <small class="err"></small>
+</label>
 
             <label
               >Email
@@ -741,6 +742,6 @@
       </div>
     </div>
 
-    <script src="js/main.js" defer></script>
+    <script src="js/main.js?v=3" defer></script>
   </body>
 </html>

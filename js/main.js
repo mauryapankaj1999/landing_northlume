@@ -1,517 +1,4 @@
-// (function () {
-//   'use strict';
-
-//   var SHEET_URL =
-//     'https://script.google.com/a/macros/northlume.in/s/AKfycbzPDr0tTUQx9k96vMRKn18V9tQ0ZVnfHSSXg4swIL0ht2sKGWDsd0xmESm4gPDumwQZXA/exec';
-
-//   var TELEGRAM_LINK = 'https://t.me/northlume';
-
-//   var modal = document.getElementById('modal');
-//   var form = document.getElementById('reg-form');
-//   var formView = document.getElementById('form-view');
-//   var thanksView = document.getElementById('thanks-view');
-//   var submitBtn = document.getElementById('submit-btn');
-//   var formErr = document.getElementById('form-err');
-//   var termsCheckbox = document.getElementById('terms');
-
-//   if (
-//     !modal ||
-//     !form ||
-//     !formView ||
-//     !thanksView ||
-//     !submitBtn ||
-//     !formErr ||
-//     !termsCheckbox
-//   ) {
-//     console.error('Required form elements are missing.');
-//     return;
-//   }
-
-//   var lastFocus = null;
-
-//   // Open modal
-//   function openModal() {
-//     lastFocus = document.activeElement;
-
-//     modal.classList.add('open');
-//     modal.setAttribute('aria-hidden', 'false');
-//     document.body.classList.add('no-scroll');
-
-//     var firstInput = form.querySelector('input');
-
-//     if (firstInput && !formView.hidden) {
-//       firstInput.focus();
-//     }
-//   }
-
-//   // Close modal
-//   function closeModal() {
-//     modal.classList.remove('open');
-//     modal.setAttribute('aria-hidden', 'true');
-//     document.body.classList.remove('no-scroll');
-
-//     if (lastFocus) {
-//       lastFocus.focus();
-//     }
-//   }
-
-//   document.querySelectorAll('[data-open-modal]').forEach(function (button) {
-//     button.addEventListener('click', openModal);
-//   });
-
-//   document.querySelectorAll('[data-close-modal]').forEach(function (button) {
-//     button.addEventListener('click', closeModal);
-//   });
-
-//   modal.addEventListener('click', function (event) {
-//     if (event.target === modal) {
-//       closeModal();
-//     }
-//   });
-
-//   document.addEventListener('keydown', function (event) {
-//     if (
-//       event.key === 'Escape' &&
-//       modal.classList.contains('open')
-//     ) {
-//       closeModal();
-//     }
-//   });
-
-//   // Validation rules
-//   var rules = {
-//     name: function (value) {
-//       return value.length >= 2
-//         ? ''
-//         : 'Please enter your name.';
-//     },
-
-//     phone: function (value) {
-//       var digits = value.replace(/\D/g, '');
-
-//       return digits.length >= 7 && digits.length <= 15
-//         ? ''
-//         : 'Enter a valid phone number.';
-//     },
-
-//     email: function (value) {
-//       return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)
-//         ? ''
-//         : 'Enter a valid email address.';
-//     }
-//   };
-
-//   function validateField(input) {
-//     var rule = rules[input.name];
-
-//     if (!rule) return true;
-
-//     var message = rule(input.value.trim());
-//     input.classList.toggle('invalid', !!message);
-
-//     var errorElement = input.parentNode.querySelector('.err');
-
-//     if (errorElement) {
-//       errorElement.textContent = message;
-//     }
-
-//     return !message;
-//   }
-
-//   function validateTerms() {
-//     var errorElement = form.querySelector('.temrs_conten .err');
-
-//     if (!termsCheckbox.checked) {
-//       if (errorElement) {
-//         errorElement.textContent =
-//           'Please accept the Terms & Conditions.';
-//         errorElement.style.display = 'block';
-//       }
-
-//       return false;
-//     }
-
-//     if (errorElement) {
-//       errorElement.textContent = '';
-//       errorElement.style.display = '';
-//     }
-
-//     return true;
-//   }
-
-//   var fields = form.querySelectorAll(
-//     'input[name="name"], input[name="phone"], input[name="email"]'
-//   );
-
-//   fields.forEach(function (input) {
-//     input.addEventListener('input', function () {
-//       if (input.classList.contains('invalid')) {
-//         validateField(input);
-//       }
-//     });
-//   });
-
-//   termsCheckbox.addEventListener('change', validateTerms);
-
-//   // Submit form
-//   form.addEventListener('submit', function (event) {
-//     event.preventDefault();
-
-//     formErr.textContent = '';
-
-//     var valid = true;
-
-//     fields.forEach(function (input) {
-//       if (!validateField(input)) {
-//         valid = false;
-//       }
-//     });
-
-//     if (!validateTerms()) {
-//       valid = false;
-//     }
-
-//     if (!valid) return;
-
-//     if (
-//       !SHEET_URL ||
-//       SHEET_URL.indexOf('https://') !== 0 ||
-//       SHEET_URL.indexOf('/exec') === -1
-//     ) {
-//       formErr.textContent =
-//         'Google Sheets connection is not configured.';
-//       return;
-//     }
-
-//     // Data sent to Google Apps Script
-//     var data = new URLSearchParams();
-
-//     data.append('name', form.elements.namedItem('name').value.trim());
-//     data.append('phone', form.elements.namedItem('phone').value.trim());
-//     data.append('email', form.elements.namedItem('email').value.trim());
-//     data.append('page', window.location.href);
-//     data.append(
-//       'terms',
-//       termsCheckbox.checked ? 'Accepted' : 'Not accepted'
-//     );
-//     data.append('telegramLink', TELEGRAM_LINK);
-
-//     submitBtn.disabled = true;
-//     submitBtn.textContent = 'Submitting...';
-
-//     fetch(SHEET_URL, {
-//       method: 'POST',
-//       mode: 'no-cors',
-//       body: data
-//     })
-//       .then(function () {
-//         /*
-//          * no-cors cannot confirm whether the row
-//          * was actually saved in Google Sheets.
-//          */
-//         form.reset();
-
-//         fields.forEach(function (input) {
-//           input.classList.remove('invalid');
-//         });
-
-//         form.querySelectorAll('.err').forEach(function (error) {
-//           error.textContent = '';
-//         });
-
-//         formView.hidden = true;
-//         thanksView.hidden = false;
-
-//         submitBtn.disabled = false;
-//         submitBtn.textContent = 'Register Now';
-//       })
-//       .catch(function (error) {
-//         console.error('Registration request failed:', error);
-
-//         formErr.textContent =
-//           'Unable to submit. Please try again.';
-
-//         submitBtn.disabled = false;
-//         submitBtn.textContent = 'Register Now';
-//       });
-//   });
-// })();
-
-
-
-// (function () {
-//   'use strict';
-
-//   var SHEET_URL =
-//     'https://script.google.com/a/macros/northlume.in/s/AKfycbzPDr0tTUQx9k96vMRKn18V9tQ0ZVnfHSSXg4swIL0ht2sKGWDsd0xmESm4gPDumwQZXA/exec';
-
-//   var TELEGRAM_LINK = 'https://t.me/northlume';
-
-//   var AUTO_OPEN_DELAY = 3000; // popup auto-opens 3 sec after page load
-//   var REDIRECT_DELAY = 3000; // redirect to Telegram 3 sec after thank-you shows
-
-//   var modal = document.getElementById('modal');
-//   var form = document.getElementById('reg-form');
-//   var formView = document.getElementById('form-view');
-//   var thanksView = document.getElementById('thanks-view');
-//   var submitBtn = document.getElementById('submit-btn');
-//   var formErr = document.getElementById('form-err');
-//   var termsCheckbox = document.getElementById('terms');
-
-//   if (
-//     !modal ||
-//     !form ||
-//     !formView ||
-//     !thanksView ||
-//     !submitBtn ||
-//     !formErr ||
-//     !termsCheckbox
-//   ) {
-//     console.error('Required form elements are missing.');
-//     return;
-//   }
-
-//   var lastFocus = null;
-//   var autoOpenTimer = null;
-//   var redirectTimer = null;
-
-//   // Open modal
-//   function openModal() {
-//     // If user opened it manually, cancel the pending auto-open
-//     clearTimeout(autoOpenTimer);
-
-//     lastFocus = document.activeElement;
-
-//     modal.classList.add('open');
-//     modal.setAttribute('aria-hidden', 'false');
-//     document.body.classList.add('no-scroll');
-
-//     var firstInput = form.querySelector('input');
-
-//     if (firstInput && !formView.hidden) {
-//       firstInput.focus();
-//     }
-//   }
-
-//   // Close modal
-//   function closeModal() {
-//     modal.classList.remove('open');
-//     modal.setAttribute('aria-hidden', 'true');
-//     document.body.classList.remove('no-scroll');
-
-//     if (lastFocus) {
-//       lastFocus.focus();
-//     }
-//   }
-
-//   document.querySelectorAll('[data-open-modal]').forEach(function (button) {
-//     button.addEventListener('click', openModal);
-//   });
-
-//   document.querySelectorAll('[data-close-modal]').forEach(function (button) {
-//     button.addEventListener('click', closeModal);
-//   });
-
-//   modal.addEventListener('click', function (event) {
-//     if (event.target === modal) {
-//       closeModal();
-//     }
-//   });
-
-//   document.addEventListener('keydown', function (event) {
-//     if (
-//       event.key === 'Escape' &&
-//       modal.classList.contains('open')
-//     ) {
-//       closeModal();
-//     }
-//   });
-
-//   // Auto-open popup after 3 seconds (only if not already open)
-//   autoOpenTimer = setTimeout(function () {
-//     if (!modal.classList.contains('open')) {
-//       openModal();
-//     }
-//   }, AUTO_OPEN_DELAY);
-
-//   // Validation rules
-//   var rules = {
-//     name: function (value) {
-//       return value.length >= 2
-//         ? ''
-//         : 'Please enter your name.';
-//     },
-
-//     phone: function (value) {
-//       var digits = value.replace(/\D/g, '');
-
-//       return digits.length >= 7 && digits.length <= 15
-//         ? ''
-//         : 'Enter a valid phone number.';
-//     },
-
-//     email: function (value) {
-//       return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)
-//         ? ''
-//         : 'Enter a valid email address.';
-//     }
-//   };
-
-//   function validateField(input) {
-//     var rule = rules[input.name];
-
-//     if (!rule) return true;
-
-//     var message = rule(input.value.trim());
-//     input.classList.toggle('invalid', !!message);
-
-//     var errorElement = input.parentNode.querySelector('.err');
-
-//     if (errorElement) {
-//       errorElement.textContent = message;
-//     }
-
-//     return !message;
-//   }
-
-//   function validateTerms() {
-//     var errorElement = form.querySelector('.temrs_conten .err');
-
-//     if (!termsCheckbox.checked) {
-//       if (errorElement) {
-//         errorElement.textContent =
-//           'Please accept the Terms & Conditions.';
-//         errorElement.style.display = 'block';
-//       }
-
-//       return false;
-//     }
-
-//     if (errorElement) {
-//       errorElement.textContent = '';
-//       errorElement.style.display = '';
-//     }
-
-//     return true;
-//   }
-
-//   var fields = form.querySelectorAll(
-//     'input[name="name"], input[name="phone"], input[name="email"]'
-//   );
-
-//   fields.forEach(function (input) {
-//     input.addEventListener('input', function () {
-//       if (input.classList.contains('invalid')) {
-//         validateField(input);
-//       }
-//     });
-//   });
-
-//   termsCheckbox.addEventListener('change', validateTerms);
-
-//   // Show thank-you view, then redirect to Telegram after 3 sec
-//   function showThanksAndRedirect() {
-//     form.reset();
-
-//     fields.forEach(function (input) {
-//       input.classList.remove('invalid');
-//     });
-
-//     form.querySelectorAll('.err').forEach(function (error) {
-//       error.textContent = '';
-//     });
-
-//     formView.hidden = true;
-//     thanksView.hidden = false;
-
-//     submitBtn.disabled = false;
-//     submitBtn.textContent = 'Register Now';
-
-//     // Make sure thank-you is visible even if modal was closed meanwhile
-//     if (!modal.classList.contains('open')) {
-//       openModal();
-//     }
-
-//     // Optional: Meta Pixel lead event
-//     if (typeof fbq === 'function') {
-//       fbq('track', 'Lead');
-//     }
-
-//     clearTimeout(redirectTimer);
-//     redirectTimer = setTimeout(function () {
-//       window.location.href = TELEGRAM_LINK;
-//     }, REDIRECT_DELAY);
-//   }
-
-//   // Submit form
-//   form.addEventListener('submit', function (event) {
-//     event.preventDefault();
-
-//     formErr.textContent = '';
-
-//     var valid = true;
-
-//     fields.forEach(function (input) {
-//       if (!validateField(input)) {
-//         valid = false;
-//       }
-//     });
-
-//     if (!validateTerms()) {
-//       valid = false;
-//     }
-
-//     if (!valid) return;
-
-//     if (
-//       !SHEET_URL ||
-//       SHEET_URL.indexOf('https://') !== 0 ||
-//       SHEET_URL.indexOf('/exec') === -1
-//     ) {
-//       formErr.textContent =
-//         'Google Sheets connection is not configured.';
-//       return;
-//     }
-
-//     // Data sent to Google Apps Script
-//     var data = new URLSearchParams();
-
-//     data.append('name', form.elements.namedItem('name').value.trim());
-//     data.append('phone', form.elements.namedItem('phone').value.trim());
-//     data.append('email', form.elements.namedItem('email').value.trim());
-//     data.append('page', window.location.href);
-//     data.append(
-//       'terms',
-//       termsCheckbox.checked ? 'Accepted' : 'Not accepted'
-//     );
-//     data.append('telegramLink', TELEGRAM_LINK);
-
-//     submitBtn.disabled = true;
-//     submitBtn.textContent = 'Submitting...';
-
-//     fetch(SHEET_URL, {
-//       method: 'POST',
-//       mode: 'no-cors',
-//       body: data
-//     })
-//       .then(function () {
-//         /*
-//          * no-cors cannot confirm whether the row
-//          * was actually saved in Google Sheets.
-//          */
-//         showThanksAndRedirect();
-//       })
-//       .catch(function (error) {
-//         console.error('Registration request failed:', error);
-
-//         formErr.textContent =
-//           'Unable to submit. Please try again.';
-
-//         submitBtn.disabled = false;
-//         submitBtn.textContent = 'Register Now';
-//       });
-//   });
-// })();
+console.log('[DEBUG] main.js v3 loaded');
 
 (function () {
   'use strict';
@@ -521,8 +8,8 @@
 
   var TELEGRAM_LINK = 'https://t.me/northlume';
 
-  var AUTO_OPEN_DELAY = 3000; // popup auto-opens 3 sec after page load
-  var THANKYOU_PAGE = 'thankyou.html'; // form submit ke baad yahan jayega
+  var AUTO_OPEN_DELAY = 3000;
+  var THANKYOU_PAGE = 'thankyou.html';
 
   var modal = document.getElementById('modal');
   var form = document.getElementById('reg-form');
@@ -531,6 +18,16 @@
   var submitBtn = document.getElementById('submit-btn');
   var formErr = document.getElementById('form-err');
   var termsCheckbox = document.getElementById('terms');
+
+  console.log('[DEBUG] elements found:', {
+    modal: !!modal,
+    form: !!form,
+    formView: !!formView,
+    thanksView: !!thanksView,
+    submitBtn: !!submitBtn,
+    formErr: !!formErr,
+    termsCheckbox: !!termsCheckbox
+  });
 
   if (
     !modal ||
@@ -541,18 +38,17 @@
     !formErr ||
     !termsCheckbox
   ) {
-    console.error('Required form elements are missing.');
+    console.error('[DEBUG] Required form elements are missing. Script stopped.');
     return;
   }
 
   var lastFocus = null;
   var autoOpenTimer = null;
 
-  // Open modal
+  // ---------- Modal ----------
   function openModal() {
-    // If user opened it manually, cancel the pending auto-open
+    console.log('[DEBUG] openModal called');
     clearTimeout(autoOpenTimer);
-
     lastFocus = document.activeElement;
 
     modal.classList.add('open');
@@ -560,14 +56,13 @@
     document.body.classList.add('no-scroll');
 
     var firstInput = form.querySelector('input');
-
     if (firstInput && !formView.hidden) {
       firstInput.focus();
     }
   }
 
-  // Close modal
   function closeModal() {
+    console.log('[DEBUG] closeModal called');
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('no-scroll');
@@ -592,39 +87,62 @@
   });
 
   document.addEventListener('keydown', function (event) {
-    if (
-      event.key === 'Escape' &&
-      modal.classList.contains('open')
-    ) {
+    if (event.key === 'Escape' && modal.classList.contains('open')) {
       closeModal();
     }
   });
 
-  // Auto-open popup after 3 seconds (only if not already open)
   autoOpenTimer = setTimeout(function () {
     if (!modal.classList.contains('open')) {
+      console.log('[DEBUG] auto-open popup');
       openModal();
     }
   }, AUTO_OPEN_DELAY);
 
-  // Validation rules
+  // ---------- Phone helper ----------
+  function normalizePhone(raw) {
+    var digits = String(raw).replace(/\D/g, '');
+
+    if (digits.length > 10) {
+      if (digits.indexOf('91') === 0) {
+        digits = digits.slice(2);
+      } else if (digits.indexOf('0') === 0) {
+        digits = digits.slice(1);
+      }
+    }
+
+    var result = digits.slice(0, 10);
+    console.log('[DEBUG] normalizePhone:', raw, '->', result);
+    return result;
+  }
+
+  // ---------- Validation rules ----------
   var rules = {
     name: function (value) {
-      return value.length >= 2
-        ? ''
-        : 'Please enter your name.';
+      return value.length >= 2 ? '' : 'Please enter your name.';
     },
 
-    phone: function (value) {
-      var digits = value.replace(/\D/g, '');
+  phone: function (value) {
+  var v = value.trim();
+  console.log('[DEBUG] phone rule check:', v, 'length:', v.length);
 
-      return digits.length >= 7 && digits.length <= 15
-        ? ''
-        : 'Enter a valid phone number.';
-    },
+  if (v.length === 0) {
+    return 'Please enter your phone number.';
+  }
+  if (!/^[0-9]+$/.test(v)) {
+    return 'Phone number must contain digits only.';
+  }
+  if (v.length < 10) {
+    return 'Phone number must be exactly 10 digits. You entered ' + v.length + '.';
+  }
+  if (v.length > 10) {
+    return 'Phone number cannot be more than 10 digits.';
+  }
+  return '';
+},
 
     email: function (value) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim())
         ? ''
         : 'Enter a valid email address.';
     }
@@ -632,15 +150,18 @@
 
   function validateField(input) {
     var rule = rules[input.name];
-
     if (!rule) return true;
 
     var message = rule(input.value.trim());
+    console.log('[DEBUG] validateField:', input.name, '| message:', message || 'OK');
+
     input.classList.toggle('invalid', !!message);
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
 
     var errorElement = input.parentNode.querySelector('.err');
-
-    if (errorElement) {
+    if (!errorElement) {
+      console.warn('[DEBUG] .err element not found for', input.name);
+    } else {
       errorElement.textContent = message;
     }
 
@@ -651,12 +172,11 @@
     var errorElement = form.querySelector('.temrs_conten .err');
 
     if (!termsCheckbox.checked) {
+      console.log('[DEBUG] terms NOT checked');
       if (errorElement) {
-        errorElement.textContent =
-          'Please accept the Terms & Conditions.';
+        errorElement.textContent = 'Please accept the Terms & Conditions.';
         errorElement.style.display = 'block';
       }
-
       return false;
     }
 
@@ -664,7 +184,6 @@
       errorElement.textContent = '';
       errorElement.style.display = '';
     }
-
     return true;
   }
 
@@ -672,9 +191,39 @@
     'input[name="name"], input[name="phone"], input[name="email"]'
   );
 
+  var phoneInput = form.querySelector('input[name="phone"]');
+  console.log('[DEBUG] fields count:', fields.length, '| phoneInput found:', !!phoneInput);
+
+  // ---------- Phone input behaviour ----------
+  if (phoneInput) {
+    phoneInput.setAttribute('type', 'tel');
+    phoneInput.setAttribute('inputmode', 'numeric');
+    phoneInput.removeAttribute('maxlength');
+    phoneInput.removeAttribute('minlength');
+
+    phoneInput.addEventListener('input', function () {
+      var cleaned = normalizePhone(phoneInput.value);
+
+      if (phoneInput.value !== cleaned) {
+        phoneInput.value = cleaned;
+      }
+
+      if (phoneInput.classList.contains('invalid')) {
+        validateField(phoneInput);
+      }
+    });
+  }
+
+  // ---------- Live validation ----------
   fields.forEach(function (input) {
     input.addEventListener('input', function () {
-      if (input.classList.contains('invalid')) {
+      if (input.name !== 'phone' && input.classList.contains('invalid')) {
+        validateField(input);
+      }
+    });
+
+    input.addEventListener('blur', function () {
+      if (input.value.trim() !== '') {
         validateField(input);
       }
     });
@@ -682,15 +231,15 @@
 
   termsCheckbox.addEventListener('change', validateTerms);
 
-  // Submit success -> thank-you page pe bhejo
   function goToThankYou() {
+    console.log('[DEBUG] redirecting to', THANKYOU_PAGE);
     window.location.href = THANKYOU_PAGE;
   }
 
-  // Submit form
+  // ---------- Submit ----------
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-
+    console.log('[DEBUG] submit handler fired');
     formErr.textContent = '';
 
     var valid = true;
@@ -705,30 +254,37 @@
       valid = false;
     }
 
-    if (!valid) return;
+    console.log(
+      '[DEBUG] final validation result -> valid:',
+      valid,
+      '| phone:',
+      form.elements.namedItem('phone').value
+    );
+
+    if (!valid) {
+      console.log('[DEBUG] BLOCKED: form invalid, not sending');
+      return;
+    }
 
     if (
       !SHEET_URL ||
       SHEET_URL.indexOf('https://') !== 0 ||
       SHEET_URL.indexOf('/exec') === -1
     ) {
-      formErr.textContent =
-        'Google Sheets connection is not configured.';
+      console.error('[DEBUG] SHEET_URL invalid');
+      formErr.textContent = 'Google Sheets connection is not configured.';
       return;
     }
 
-    // Data sent to Google Apps Script
     var data = new URLSearchParams();
-
     data.append('name', form.elements.namedItem('name').value.trim());
     data.append('phone', form.elements.namedItem('phone').value.trim());
     data.append('email', form.elements.namedItem('email').value.trim());
     data.append('page', window.location.href);
-    data.append(
-      'terms',
-      termsCheckbox.checked ? 'Accepted' : 'Not accepted'
-    );
+    data.append('terms', termsCheckbox.checked ? 'Accepted' : 'Not accepted');
     data.append('telegramLink', TELEGRAM_LINK);
+
+    console.log('[DEBUG] sending data:', data.toString());
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
@@ -739,20 +295,17 @@
       body: data
     })
       .then(function () {
-        /*
-         * no-cors cannot confirm whether the row
-         * was actually saved in Google Sheets.
-         */
+        console.log('[DEBUG] fetch finished (no-cors, result unknown)');
         goToThankYou();
       })
       .catch(function (error) {
-        console.error('Registration request failed:', error);
+        console.error('[DEBUG] fetch failed:', error);
 
-        formErr.textContent =
-          'Unable to submit. Please try again.';
-
+        formErr.textContent = 'Unable to submit. Please try again.';
         submitBtn.disabled = false;
         submitBtn.textContent = 'Register Now';
       });
   });
+
+  console.log('[DEBUG] all listeners attached');
 })();
