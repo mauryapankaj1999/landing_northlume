@@ -640,6 +640,7 @@ console.log(
     data.append('name', form.elements.namedItem('name').value.trim());
     data.append('phone', form.elements.namedItem('phone').value.trim());
     data.append('email', form.elements.namedItem('email').value.trim());
+    console.log('[SUBMIT DEBUG] URL being saved:', window.location.href);
     data.append('page', window.location.href);
     data.append('terms', termsCheckbox.checked ? 'Accepted' : 'Not accepted');
     data.append('telegramLink', TELEGRAM_LINK);
