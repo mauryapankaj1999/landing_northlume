@@ -278,6 +278,7 @@ console.log('[DEBUG] main.js v3 loaded');
 
     var data = new URLSearchParams();
 
+var params = new URLSearchParams(window.location.search);
 
 var utmFields = [
   "utm_source",
