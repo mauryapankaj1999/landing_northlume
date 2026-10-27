@@ -611,6 +611,17 @@ console.log('[DEBUG] main.js v3 loaded');
 
     // UTM / ad tracking fields
     var params = new URLSearchParams(window.location.search);
+
+
+    console.log(
+  "[UTM DEBUG] Current page URL:",
+  window.location.href
+);
+
+console.log(
+  "[UTM DEBUG] Parsed parameters:",
+  Object.fromEntries(params.entries())
+);
     var utmFields = [
       'utm_source',
       'utm_medium',
