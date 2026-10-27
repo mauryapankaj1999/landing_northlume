@@ -622,20 +622,24 @@ console.log(
   "[UTM DEBUG] Parsed parameters:",
   Object.fromEntries(params.entries())
 );
-    var utmFields = [
-      'utm_source',
-      'utm_medium',
-      'utm_campaign',
-      'adsetName',
-      'adName',
-      'utm_adgroup',
-      'utm_content',
-      'utm_term'
-    ];
+  var trackingFields = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_content",
+  "utm_term",
+  "ad_name",
+  "adset_name",
+  "campaign_id",
+  "adset_id",
+  "ad_id",
+  "fbclid",
+  "utm_id"
+];
 
-    utmFields.forEach(function (key) {
-      data.append(key, params.get(key) || '');
-    });
+trackingFields.forEach(function (key) {
+  data.append(key, params.get(key) || "");
+});
 
     data.append('name', form.elements.namedItem('name').value.trim());
     data.append('phone', form.elements.namedItem('phone').value.trim());
